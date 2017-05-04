@@ -1,16 +1,12 @@
 /*===============================================================================
 FILE:              Matrix.cpp
-
 DESCRIPTION:       This program is the implementation file for the Matrix and Matrix_ops
                     Classes declared in Matrix.h
-
 COMPILER:          Linux GNU g++ compiler c++ -std=c++11
                     using custom makefile and Clion IDE editor
-
 NOTES:             Includes the member functions for both the Matrix and Matrix_ops objects
                     includes Matrix.h for the Classes
                     includes Expo function but not a class member
-
 MODIFICATION HISTORY:
 Author                  Date               Version
 ---------------         ----------         --------------
@@ -33,6 +29,11 @@ Shawn Ray               2017-04-27         Version 2.4 cleaned up code
 Shawn Ray               2017-04-28         Version 2.5 added Clear and resize functions
                                                clear clears the memory and resize resizes
                                                 a class object
+Shawn Ray               2017-04-29         Version 2.6 destructor bug,
+Shawn Ray               2017-04-30         Version 2.7 Virtual destruction,
+Shawn Ray               2017-05-01         Version 2.8  inverse of a matrix
+Shawn Ray               2017-04-02         Version 2.9  inverse of a matrix
+Shawn Ray               2017-04-03         Version 3.0  continued project
 ================================================================================*/
 
 #include "Matrix.h"
@@ -47,9 +48,6 @@ NOTES:             Put other information here ...
 template<typename T>
 Matrix<T>::Matrix(){
     std::cout << "\tTest default constructor \n"; //remove
-    rows = 0;
-    cols = 0;
-    **array = NULL;
 
 }
 
@@ -76,10 +74,10 @@ RETURNS:           Nothing (Void Function)
 NOTES:             Put other information here ...
 ===============================================================================*/
 template<typename T>
-Matrix_ops<T>::Matrix_ops(const Matrix_ops<T> &m1){
+Matrix<T>::Matrix(const Matrix<T> &m1){
 
     std::cout << "\tTest copy construtctor \n"; //remove
-    *this = m1;
+    (*this) = m1;
 }
 
 /*=============================================================================
@@ -134,13 +132,19 @@ NOTES:             Put other information here ...
 template<typename T>
 Matrix<T>& Matrix<T>::operator = (const Matrix<T> &m1){
 
-    if(this->rows != m1.rows || this->cols != m1.cols) {
-        resize(m1.rows, m1.cols);
-    }
-    for(int i = 0; i < m1.rows; ++i){
-        for(int j = 0; j < m1.cols; j++){
-            array[i][j] = m1.array[i][j];
-            std::cout << array[i][j] << " ";
+    //if(this->rows != m1.rows || this->cols != m1.cols) {
+    std::cout << "\tTest = operator resize prior\n"; // remove
+    std::cout << "\tTest m1 rows\n"; // remove
+    std::cout << m1.rows;// remove
+    std::cout << "\tTest m1 cols\n"; // remove
+    std::cout << m1.cols; // remove
+    this->resize(m1.rows, m1.cols);
+    std::cout << "\tTest = operator resize post\n"; // remove
+    //}
+    for(int i = 0; i < this->rows; ++i){
+        for(int j = 0; j < this->cols; j++){
+            this->array[i][j] = m1.array[i][j];
+            std::cout << this->array[i][j] << " "; // remove
         }
 
     }
@@ -156,20 +160,26 @@ RETURNS:           Nothing (Void Function)
 NOTES:             Put other information here ...
 ===============================================================================*/
 template<typename T>
-void Matrix<T>::resize(int s_row, int s_col, bool doclear){
+void Matrix<T>::resize(const int &s_row, const int &s_col, bool doclear){
 
-    if(doclear) clear();
+
+    if(doclear){
+        std::cout << "doclear\n";
+        this->clear();
+
+    }
+
     std::cout << "Resizing to " << s_row << "x" << s_col << std::endl; // remove
-    rows = s_row;
-    cols = s_col;
+    this->rows = s_row;
+    this->cols = s_col;
 
-    array = new T*[s_row];
+    this->array = new T*[s_row];
 
     for(int i = 0; i < s_row; ++i){
-        array[i] = new T[s_col];
+        this->array[i] = new T[s_col];
         for(int j = 0; j < s_col; ++j){
 
-            array[i][j] = 0;
+            this->array[i][j] = 0;
 
         }
     }
@@ -196,7 +206,21 @@ NOTES:             Put other information here ...
 ===============================================================================*/
 
 template<typename T>
+Matrix_ops<T>::Matrix_ops(const Matrix_ops<T>& m1) : Matrix<T>::Matrix(m1) {}
+
+/*=============================================================================
+FUNCTION:          name-of-function()
+DESCRIPTION:       A brief description of this function ...
+RETURNS:           What the function returns ... or ...
+RETURNS:           Nothing (Void Function)
+NOTES:             Put other information here ...
+===============================================================================*/
+
+template<typename T>
 Matrix_ops<T> Matrix_ops<T>::operator + (const Matrix_ops<T> &m1) const{
+
+    if(this->rows != m1.rows || this->cols != m1.cols)
+        throw "\tThe matrices are of different sizes!\n";
 
     Matrix_ops<T> m2(this->rows,this->cols);
 
@@ -213,6 +237,9 @@ Matrix_ops<T> Matrix_ops<T>::operator + (const Matrix_ops<T> &m1) const{
 template<typename T>
 Matrix_ops<T> Matrix_ops<T>::operator - (const Matrix_ops<T> &m1) const{
 
+    if(this->rows != m1.rows || this->cols != m1.cols)
+        throw "\tThe matrices are of different sizes!\n";
+
     Matrix_ops<T> m2(this->rows,this->cols);
 
     for(int i = 0; i < m1.rows; ++i){
@@ -226,6 +253,7 @@ Matrix_ops<T> Matrix_ops<T>::operator - (const Matrix_ops<T> &m1) const{
 
 template<typename T>
 Matrix_ops<T> Matrix_ops<T>::operator * (const Matrix_ops<T> &m1) const{
+
 
     int r = this->rows;
     int c = m1.cols;
@@ -281,8 +309,6 @@ template<typename T>
 T Matrix_ops<T>::det(){
     std::cout << "\tTest Determinant\n"; // remove
 
-
-
     if (this->rows == 2) {
         std::cout << "\tTest Determinant base case\n"; // remove
         this->deter = ((this->array[0][0] * this->array[1][1]) - (this->array[1][0] * this->array[0][1]));
@@ -291,8 +317,8 @@ T Matrix_ops<T>::det(){
         std::cout << "\tTest Determinant recursive case\n"; // remove
         Matrix_ops<T> m1(this->rows - 1, this->cols - 1);
 
-            this->deter = 0;
-            int l = 0;
+        this->deter = 0;
+        int l = 0;
 
         for (int i = 0; i < this->cols; ++i) {
             for (int j = 1; j < this->rows; ++j) {
@@ -317,49 +343,120 @@ Matrix_ops<T> Matrix_ops<T>::inv(){
 
     Matrix_ops<T> m1(this->rows, (2 * this->cols));
 
+    for (int i = 0; i < this->cols; ++i) { // add an identity matrix
+        for (int j = 0; j < this->rows; ++j) {
+            m1.array[i][j] = this->array[i][j];
+            m1.array[i][this->cols + i] = 1;
+        }
+    }
 
+
+
+    std::cout << "\n\n\tTest inverse m1 prior to reduced row \n"; //remove
+    std::cout << m1; //remove
+
+    m1.reduced_row();
+
+    return m1;
+}
+
+template <typename T>
+Matrix_ops<T> Matrix_ops<T>::reduced_row() const{
+
+    if(this->rows >= this->cols)
+        throw "\n\tThis is not an augmented matrix!\n";
+
+
+    Matrix_ops<T> m1(this->rows, this->cols);
+    m1 = *this;
+
+    std::cout << "\n\n\t Post assign \n"; //remove
+    std::cout << m1; //remove
+
+
+    std::cout << "\n\n\tthis rows \n"; //remove
+    std::cout << this->rows;
+    std::cout << "\n\n\tthis cols \n"; //remove
+    std::cout << this->cols;
+    std::cout << "\n\n\tm1 rows \n"; //remove
+    std::cout << m1.rows;
+    std::cout << "\n\n\tm1 cols \n"; //remove
+    std::cout << m1.cols;
+
+    for(int i = 0; i < m1.rows; ++i) {
+
+        m1.div_row(i);
+
+            for (int j = 0; j < m1.rows; ++j) {
+
+                if (j != i){
+                    for (int n = 0; n < m1.cols; ++n) {
+                        T temp = m1.array[i][i];
+                        m1.array[j][n] -= (temp * m1.array[j][n]);
+                    }
+                }
+        }
+    }
+    std::cout << "\tTest inverse m1 \n"; //remove
+    std::cout << m1; //remove
 
     return m1;
 }
 
 template<typename T>
-Matrix_ops<T> Matrix_ops<T>::solve(){
+Matrix_ops<T>& Matrix_ops<T>::div_row(int i){
+
+    T temp = this->array[i][i];
+
+    for(int k = i; k < this->cols; ++k){
+        this->array[i][k] /= temp;
+        std::cout << "\n\n\t k loop \n"; //remove
+        std::cout << std::setprecision(2) <<  *this; //remove
+    }
+    return *this;
+}
+
+
+template<typename T>
+Matrix_ops<T> Matrix_ops<T>::solve() const{
+
+    std::cout << "\nTest solve\n"; //remove
 
     if(this->cols - 1 != this->rows)
-            throw "\tThis system can not be solved by Cramer's rule!\n";
+        throw "\n\tThis system can not be solved by Cramer's rule!\n";
 
-    //T resultarray[this->rows - 1]; // contains the number of variables
+
     Matrix_ops<T> maj_det(this->rows, this->cols - 1);
     Matrix_ops<T> var_det(this->rows, this->cols - 1);
     Matrix_ops<T> result_mat(this->cols - 1, 1);
-    //T result_array[this->rows - 1];
+
 
     for (int i = 0; i < this->cols; ++i) {
         for (int j = 0; j < this->rows; ++j) {
             for(int k = 0; k < this->cols-1; ++k){
 
-                    var_det.array[j][k] = this->array[j][k];
-                        if(!i){
-                            maj_det.array[j][k] = this->array[j][k];
-                            std::cout << "\tTest maj det if statement";
-                            std::cout << maj_det; //remove
-                        }
-                        if(k == i){
-                           var_det.array[j][k] = this->array[j][this->cols - 1];
-                           std::cout << "\tTest var det if statement";
-                            std::cout << var_det; //remove
-                        }
+                var_det.array[j][k] = this->array[j][k];
+                if(!i){
+                    maj_det.array[j][k] = this->array[j][k];
+                    std::cout << "\tTest maj det if statement"; // remove
+                    std::cout << maj_det; //remove
                 }
-
+                if(k == i){
+                    var_det.array[j][k] = this->array[j][this->cols - 1];
+                    std::cout << "\tTest var det if statement"; //remove
+                    std::cout << var_det; //remove
+                }
             }
-            if(i == this->cols - 1) continue;
-                result_mat.array[i][0] = (var_det.det() / maj_det.det());
-                std::cout << "\nfoo\n";
-                std::cout << result_mat.array[i][0];
 
         }
+        if(i == this->cols - 1) continue;
+        result_mat.array[i][0] = (var_det.det() / maj_det.det());
+        std::cout << "\nfoo\n"; //remove
+        std::cout << result_mat.array[i][0]; //remove
 
-        return result_mat;
+    }
+
+    return result_mat;
 }
 
 
@@ -371,26 +468,39 @@ RETURNS:           What the function returns ... or ...
 RETURNS:           Nothing (Void Function)
 NOTES:             Put other information here ...
 ===============================================================================*/
+
 template<typename T>
 Matrix<T>::~Matrix(){
-    std::cout <<"\t Destructor\n";
-    clear();
+    std::cout <<"\t Destructor\n"; //remove
+    this->clear();
 
 }
 template<typename T>
 void Matrix<T>::clear(){
-    std::cout <<"\t clear\n";
-    for(int i = 0; i < rows; ++i)
-    delete [] array[i];
+    std::cout <<"\t clear\n";//remove
+    for(int i = 0; i < this->rows; ++i){
+        std::cout <<"\t before delete\n";//remove
+        delete [] this->array[i];
+        //this->array[i] = NULL;
+        std::cout <<"\t after delete\n";//remove
+    }
+    std::cout <<"\t post for loop clear\n";//remove
+    delete [] this->array;
+/*
+    for(int i = this->cols; i >= 0; --i){
+        for(int j = 0; j < this->rows; ++j){
+            free(this->array[j]);
+        }
+        free(this->array[i]);
+    }*/
 
-    delete [] array;
 }
 
 
 template<typename T>
-T expo(const T &base, const T &power){
+T expo(const T &base, const T &power) {
 
-    switch(power){
+    switch (power) {
         case 0:
             return 1;
         case 1:
@@ -400,5 +510,4 @@ T expo(const T &base, const T &power){
         default:
             return (base * (expo(base, power - 1)));
     }
-
 }

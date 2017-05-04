@@ -1,15 +1,11 @@
 /*===============================================================================
 FILE:              Matrix.h
-
 DESCRIPTION:       This header file creates the Classes used for Matrices
-
 COMPILER:          Linux GNU g++ compiler c++ -std=c++11
                     using custom makefile and Clion IDE editor
-
 NOTES:             Matrix_ops inherits from Matrix class and Stuff class just contains the stuff used
                         in the Driver
                          Matrix has protected members so Matrix_ops can inherit, so no private members
-
 MODIFICATION HISTORY:
 Author                  Date               Version
 ---------------         ----------         --------------
@@ -32,6 +28,11 @@ Shawn Ray               2017-04-27         Version 2.4 cleaned up code
 Shawn Ray               2017-04-28         Version 2.5 added Clear and resize functions
                                                 clear clears the memory and resize resizes
                                                 a class object
+Shawn Ray               2017-04-29         Version 2.6
+Shawn Ray               2017-04-30         Version 2.7
+Shawn Ray               2017-05-01         Version 2.8 virtual destruction
+Shawn Ray               2017-04-02         Version 2.9
+Shawn Ray               2017-04-03         Version 3.0
 ================================================================================*/
 
 
@@ -52,12 +53,13 @@ protected:
     int cols;
     T **array;
     T deter;
-    void resize(int, int, bool = true);
+    void resize(const int&, const int&, bool = true);
     void clear();
 
 public:
     Matrix();   // default constructor
     Matrix(int, int);	// overloaded constructor
+    Matrix(const Matrix<T> &); // copy constructor
 
     template<typename U>
     friend std::istream& operator >> (std::istream &, Matrix<U> &);
@@ -67,7 +69,7 @@ public:
     Matrix<T>& operator = (const Matrix<T> &);
 
 
-    ~Matrix();
+    virtual ~Matrix();
 };
 
 template<typename T>
@@ -77,7 +79,7 @@ class Matrix_ops : public Matrix<T>
 public:
 
     Matrix_ops(int, int); // intialized constructor
-    Matrix_ops(const Matrix_ops<T> &); // copy constructor
+    Matrix_ops(const Matrix_ops<T> &); // initialized copy constructor
 
     Matrix_ops<T> operator + (const Matrix_ops<T> &) const;
     Matrix_ops<T>  operator - (const Matrix_ops<T>  &) const;
@@ -87,8 +89,9 @@ public:
     Matrix_ops<T> trans() const;
     T det();
     Matrix_ops<T> inv();
-    Matrix_ops<T> solve();
-
+    Matrix_ops<T> reduced_row() const;
+    Matrix_ops<T>& div_row(int);
+    Matrix_ops<T> solve() const;
 
 };
 
@@ -101,9 +104,6 @@ public:
     char file1[20];
     std::ifstream infile;
 };
-
-
-
 
 //function declarations
 template<typename T> T expo(const T &, const T &); // to replace the pow function
