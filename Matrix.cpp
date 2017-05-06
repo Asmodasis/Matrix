@@ -1,12 +1,16 @@
 /*===============================================================================
 FILE:              Matrix.cpp
+
 DESCRIPTION:       This program is the implementation file for the Matrix and Matrix_ops
                     Classes declared in Matrix.h
+
 COMPILER:          Linux GNU g++ compiler c++ -std=c++11
                     using custom makefile and Clion IDE editor
+
 NOTES:             Includes the member functions for both the Matrix and Matrix_ops objects
                     includes Matrix.h for the Classes
                     includes Expo function but not a class member
+
 MODIFICATION HISTORY:
 Author                  Date               Version
 ---------------         ----------         --------------
@@ -32,31 +36,38 @@ Shawn Ray               2017-04-28         Version 2.5 added Clear and resize fu
 Shawn Ray               2017-04-29         Version 2.6 destructor bug,
 Shawn Ray               2017-04-30         Version 2.7 Virtual destruction,
 Shawn Ray               2017-05-01         Version 2.8  inverse of a matrix
-Shawn Ray               2017-04-02         Version 2.9  inverse of a matrix
-Shawn Ray               2017-04-03         Version 3.0  continued project
+Shawn Ray               2017-05-02         Version 2.9  inverse of a matrix
+Shawn Ray               2017-05-03         Version 3.0  continued project
+Shawn Ray               2017-05-04         Version 3.1 added member function for
+                                                    for output file
+Shawn Ray               2017-05-05         Version 3.2 Worked on completing the inverse
 ================================================================================*/
 
 #include "Matrix.h"
 
 /*=============================================================================
-FUNCTION:          name-of-function()
-DESCRIPTION:       A brief description of this function ...
-RETURNS:           What the function returns ... or ...
-RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+FUNCTION:          Matrix<T>::Matrix(
+DESCRIPTION:       This function is the default constructor for the Matrix class
+                    it sets all values to null whenever an object is created.
+RETURNS:           Being a constructor, this function returns a Matrix object
+NOTES:             templated class functions
 ===============================================================================*/
 template<typename T>
 Matrix<T>::Matrix(){
     std::cout << "\tTest default constructor \n"; //remove
+    rows = 0;
+    cols = 0;
+    array = NULL;
 
 }
 
 /*=============================================================================
-FUNCTION:          name-of-function()
-DESCRIPTION:       A brief description of this function ...
-RETURNS:           What the function returns ... or ...
-RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+FUNCTION:          Matrix<T>::Matrix(int n_rows, int n_cols)
+DESCRIPTION:       This is the overloaded constructor for the Matrix class,
+                    This takes a size of a matrix (rows, cols) and calls the
+                      resize function
+RETURNS:           Being a constructor, this function returns a Matrix object
+NOTES:             templated class functions
 ===============================================================================*/
 template<typename T>
 Matrix<T>::Matrix(int n_rows, int n_cols){
@@ -67,11 +78,11 @@ Matrix<T>::Matrix(int n_rows, int n_cols){
 }
 
 /*=============================================================================
-FUNCTION:          name-of-function()
-DESCRIPTION:       A brief description of this function ...
-RETURNS:           What the function returns ... or ...
-RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+FUNCTION:          Matrix<T>::Matrix(const Matrix<T> &m1)
+DESCRIPTION:       This is the copy constructor, it calls the assignment operator
+                    to copy a Matrix to another.
+RETURNS:           Being a constructor, this function returns a Matrix object
+NOTES:             templated class functions
 ===============================================================================*/
 template<typename T>
 Matrix<T>::Matrix(const Matrix<T> &m1){
@@ -81,11 +92,11 @@ Matrix<T>::Matrix(const Matrix<T> &m1){
 }
 
 /*=============================================================================
-FUNCTION:          name-of-function()
-DESCRIPTION:       A brief description of this function ...
-RETURNS:           What the function returns ... or ...
-RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+FUNCTION:          std::istream& operator >> (std::istream &input, Matrix<T> &m1)
+DESCRIPTION:       This function overloads the extraction operators to take input
+                    into a Matrix Object
+RETURNS:           The function returns an istream type named input
+NOTES:             templated class functions
 ===============================================================================*/
 template<typename T>
 std::istream& operator >> (std::istream &input, Matrix<T> &m1){
@@ -100,11 +111,11 @@ std::istream& operator >> (std::istream &input, Matrix<T> &m1){
 }
 
 /*=============================================================================
-FUNCTION:          name-of-function()
-DESCRIPTION:       A brief description of this function ...
-RETURNS:           What the function returns ... or ...
-RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+FUNCTION:          std::ostream& operator << (std::ostream &output, const Matrix<T> &m1)
+DESCRIPTION:       This function overloads the insertion operators to display a Matrix
+                    object not only to a screen but also a file
+RETURNS:           This function returns the ostream type named output
+NOTES:             templated class functions
 ===============================================================================*/
 template<typename T>
 std::ostream& operator << (std::ostream &output, const Matrix<T> &m1){
@@ -125,9 +136,8 @@ std::ostream& operator << (std::ostream &output, const Matrix<T> &m1){
 FUNCTION:          Matrix Matrix::operator = (const Matrix &m1
 DESCRIPTION:       Assigned the elements of polynomial m1 to the
                     this polynomial
-RETURNS:           What the function returns ... or ...
-RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+RETURNS:           Returns the object being worked with (this)
+NOTES:             templated class functions
 ===============================================================================*/
 template<typename T>
 Matrix<T>& Matrix<T>::operator = (const Matrix<T> &m1){
@@ -153,11 +163,10 @@ Matrix<T>& Matrix<T>::operator = (const Matrix<T> &m1){
 }
 
 /*=============================================================================
-FUNCTION:          name-of-function()
-DESCRIPTION:       A brief description of this function ...
-RETURNS:           What the function returns ... or ...
+FUNCTION:          Matrix<T>::resize(const int &s_row, const int &s_col, bool doclear)
+DESCRIPTION:       The purpose of this function is to resize a Matrix object as needed
 RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+NOTES:             templated class functions and is a *protected* member
 ===============================================================================*/
 template<typename T>
 void Matrix<T>::resize(const int &s_row, const int &s_col, bool doclear){
@@ -169,7 +178,7 @@ void Matrix<T>::resize(const int &s_row, const int &s_col, bool doclear){
 
     }
 
-    std::cout << "Resizing to " << s_row << "x" << s_col << std::endl; // remove
+    std::cout << "\tResizing to " << s_row << "x" << s_col << std::endl; // remove
     this->rows = s_row;
     this->cols = s_col;
 
@@ -187,33 +196,33 @@ void Matrix<T>::resize(const int &s_row, const int &s_col, bool doclear){
 }
 
 /*=============================================================================
-FUNCTION:          name-of-function()
-DESCRIPTION:       A brief description of this function ...
-RETURNS:           What the function returns ... or ...
-RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+FUNCTION:          Matrix_ops<T>::Matrix_ops(int i, int j) : Matrix<T>::Matrix(i, j) {}
+DESCRIPTION:       Overloaded constructor for Matrix_ops
+RETURNS:           Being a constructor, this function returns a Matrix object
+NOTES:             templated class functions -- initialized from the overloaded
+                            constructor from Matrix class
 ===============================================================================*/
 
 template<typename T>
 Matrix_ops<T>::Matrix_ops(int i, int j) : Matrix<T>::Matrix(i, j) {}
 
 /*=============================================================================
-FUNCTION:          name-of-function()
-DESCRIPTION:       A brief description of this function ...
-RETURNS:           What the function returns ... or ...
-RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+FUNCTION:          Matrix_ops<T>::Matrix_ops(const Matrix_ops<T>& m1) : Matrix<T>::Matrix(m1)
+DESCRIPTION:       This function is the copy constructor for Matrix_ops class
+RETURNS:           Being a constructor, this function returns a Matrix object
+NOTES:             templated class functions -- initialized from the copy
+                            constructor from Matrix class
 ===============================================================================*/
 
 template<typename T>
 Matrix_ops<T>::Matrix_ops(const Matrix_ops<T>& m1) : Matrix<T>::Matrix(m1) {}
 
 /*=============================================================================
-FUNCTION:          name-of-function()
-DESCRIPTION:       A brief description of this function ...
-RETURNS:           What the function returns ... or ...
-RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+FUNCTION:          Matrix_ops<T> Matrix_ops<T>::operator + (const Matrix_ops<T> &m1) const
+DESCRIPTION:       This function overloads the + operator to add to Matrices
+RETURNS:           Returns the result of the addition as an Object
+NOTES:             templated class functions -- declared const as to not modify
+                        the objects passed to it.
 ===============================================================================*/
 
 template<typename T>
@@ -233,6 +242,13 @@ Matrix_ops<T> Matrix_ops<T>::operator + (const Matrix_ops<T> &m1) const{
     return m2;
 }
 
+/*=============================================================================
+FUNCTION:          Matrix_ops<T> Matrix_ops<T>::operator - (const Matrix_ops<T> &m1) const
+DESCRIPTION:       This function overloads the - operator to subtract two Matrices
+RETURNS:           Returns the result of the subtraction as an Object
+NOTES:             templated class functions -- declared const as to not modify
+                        the objects passed to it.
+===============================================================================*/
 
 template<typename T>
 Matrix_ops<T> Matrix_ops<T>::operator - (const Matrix_ops<T> &m1) const{
@@ -251,27 +267,41 @@ Matrix_ops<T> Matrix_ops<T>::operator - (const Matrix_ops<T> &m1) const{
     return m2;
 }
 
+/*=============================================================================
+FUNCTION:          Matrix_ops<T> Matrix_ops<T>::operator * (const Matrix_ops<T> &m1) const
+DESCRIPTION:       This function overloads the * operator to multiply two Matrices
+RETURNS:           Returns the result of the multiplication as an Object
+NOTES:             templated class functions -- declared const as to not modify
+                        the objects passed to it.
+===============================================================================*/
+
 template<typename T>
 Matrix_ops<T> Matrix_ops<T>::operator * (const Matrix_ops<T> &m1) const{
 
+    Matrix_ops<T> m2(this->rows,m1.cols);
 
-    int r = this->rows;
-    int c = m1.cols;
-    int h = m1.rows;
+    if(this->cols != m1.rows)
+        throw "\n\tYou can not multiply Matrices without matching sizes\n";
 
-    Matrix_ops<T> m2(r,c);
-
-    //if(this->cols != m1.rowsr,c) {error};
-
-    for(int k = 0; k < r; ++k){
-        for(int i = 0; i < c; ++i) {
-            for (int j = 0; j < h; ++j) {
+    for(int k = 0; k < this->rows; ++k){
+        for(int i = 0; i < m1.cols; ++i) {
+            for (int j = 0; j < m1.rows; ++j) {
                 m2.array[k][i] += (this->array[k][j] * m1.array[j][i]);
             }
         }
     }
     return m2;
 }
+
+/*=============================================================================
+FUNCTION:          Matrix_ops<T>::operator == (const Matrix_ops<T> &m1) const
+DESCRIPTION:       This function tests if two Matrix objects are equal by
+                    overloading the == sign
+RETURNS:           This function returns true or false depending on if the Matrices
+                        are equal or not.
+NOTES:             templated class functions -- declared const as to not modify
+                        the objects passed to it.
+===============================================================================*/
 
 template<typename T>
 bool Matrix_ops<T>::operator == (const Matrix_ops<T> &m1) const{
@@ -291,6 +321,13 @@ bool Matrix_ops<T>::operator == (const Matrix_ops<T> &m1) const{
 
 }
 
+/*=============================================================================
+FUNCTION:          Matrix_ops<T> Matrix_ops<T>::trans() const
+DESCRIPTION:       This function computers the transpose of a Matrix
+RETURNS:           Returns the resulting object of the tranpose
+NOTES:             templated class functions -- declared const as to not modify
+                        the objects passed to it.
+===============================================================================*/
 
 template<typename T>
 Matrix_ops<T> Matrix_ops<T>::trans() const{
@@ -305,9 +342,21 @@ Matrix_ops<T> Matrix_ops<T>::trans() const{
     return m1;
 
 }
+
+/*=============================================================================
+FUNCTION:          Matrix_ops<T>::det()
+DESCRIPTION:       This function computes the determinant of a Matrix
+RETURNS:           This function returns the result of the determinant as
+                    the templated data after the result of determination
+NOTES:             templated class functions -- This function uses Recursion
+===============================================================================*/
+
 template<typename T>
 T Matrix_ops<T>::det(){
     std::cout << "\tTest Determinant\n"; // remove
+
+    if(this->rows != this->cols)
+        throw "\n\tYou can not take a determinant of a non-square matrix\n";
 
     if (this->rows == 2) {
         std::cout << "\tTest Determinant base case\n"; // remove
@@ -336,10 +385,18 @@ T Matrix_ops<T>::det(){
     return this->deter;
 }
 
-
+/*=============================================================================
+FUNCTION:          Matrix_ops<T> Matrix_ops<T>::inv()
+DESCRIPTION:       This function computes the inverse of a Matrix
+RETURNS:           The function returns the resulting Matrix inverse object
+NOTES:             templated class functions
+===============================================================================*/
 
 template<typename T>
 Matrix_ops<T> Matrix_ops<T>::inv(){
+
+    if(this->det() == 0)
+        throw "\n\tThis matrix does not have an inverse\n";
 
     Matrix_ops<T> m1(this->rows, (2 * this->cols));
 
@@ -360,6 +417,14 @@ Matrix_ops<T> Matrix_ops<T>::inv(){
     return m1;
 }
 
+/*=============================================================================
+FUNCTION:          Matrix_ops<T> Matrix_ops<T>::reduced_row() const
+DESCRIPTION:       This function puts a Matrix in reduced row echelon form
+RETURNS:           This function returns the resulting Matrix object
+NOTES:             templated class functions -- declared const as not to modify
+                    the objects passed to it
+===============================================================================*/
+
 template <typename T>
 Matrix_ops<T> Matrix_ops<T>::reduced_row() const{
 
@@ -372,36 +437,42 @@ Matrix_ops<T> Matrix_ops<T>::reduced_row() const{
 
     std::cout << "\n\n\t Post assign \n"; //remove
     std::cout << m1; //remove
-
-
     std::cout << "\n\n\tthis rows \n"; //remove
-    std::cout << this->rows;
+    std::cout << this->rows;//remove
     std::cout << "\n\n\tthis cols \n"; //remove
-    std::cout << this->cols;
+    std::cout << this->cols;//remove
     std::cout << "\n\n\tm1 rows \n"; //remove
-    std::cout << m1.rows;
+    std::cout << m1.rows;//remove
     std::cout << "\n\n\tm1 cols \n"; //remove
-    std::cout << m1.cols;
+    std::cout << m1.cols;//remove
 
     for(int i = 0; i < m1.rows; ++i) {
 
         m1.div_row(i);
 
-            for (int j = 0; j < m1.rows; ++j) {
+        for(int j =  i + 1; j < m1.rows; ++j){
+            for(int k = 0; k < m1.cols; ++k){
 
-                if (j != i){
-                    for (int n = 0; n < m1.cols; ++n) {
-                        T temp = m1.array[i][i];
-                        m1.array[j][n] -= (temp * m1.array[j][n]);
-                    }
-                }
+                    m1.array[j][k] -= (m1.array[i][k] * m1.array[j][i]);
+
+            }
         }
+
+
     }
     std::cout << "\tTest inverse m1 \n"; //remove
     std::cout << m1; //remove
 
     return m1;
 }
+
+/*=============================================================================
+FUNCTION:          Matrix_ops<T>& Matrix_ops<T>::div_row(int i)
+DESCRIPTION:       This function takes a Matrix object and divides a row
+                    of that Matrix by the element in the position passed
+RETURNS:           This function returns the object being worked with (this)
+NOTES:             templated class functions
+===============================================================================*/
 
 template<typename T>
 Matrix_ops<T>& Matrix_ops<T>::div_row(int i){
@@ -416,6 +487,13 @@ Matrix_ops<T>& Matrix_ops<T>::div_row(int i){
     return *this;
 }
 
+/*=============================================================================
+FUNCTION:          Matrix_ops<T> Matrix_ops<T>::solve() const
+DESCRIPTION:       This function solves a system of equations using cramers rule
+RETURNS:           Returns a *vector* Matrix of the results of the solving
+NOTES:             templated class functions -- declared const as not to modify
+                    the objects passed to it
+===============================================================================*/
 
 template<typename T>
 Matrix_ops<T> Matrix_ops<T>::solve() const{
@@ -459,14 +537,40 @@ Matrix_ops<T> Matrix_ops<T>::solve() const{
     return result_mat;
 }
 
+/*=============================================================================
+FUNCTION:          Matrix_ops<T>& Matrix_ops<T>::out_file(char file [])
+DESCRIPTION:       This function is a member of Matrix and does the output file
+                    of the object passed into it.
+RETURNS:           Returns the object being worked with (this) but implied
+NOTES:             templated class functions
+===============================================================================*/
+
+template<typename T>
+Matrix_ops<T>& Matrix_ops<T>::out_file(char file []){
+
+    std::ofstream outfile;
+
+    strcat(file, ".mtx");
+
+    outfile.open(file);
+
+    outfile << std::setw(4) << this->rows << " X " << this->cols;
+
+    outfile << *this;
+
+    outfile.close();
+
+}
+
 
 
 /*=============================================================================
-FUNCTION:          name-of-function()
-DESCRIPTION:       A brief description of this function ...
-RETURNS:           What the function returns ... or ...
-RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+FUNCTION:          Matrix<T>::~Matrix()
+DESCRIPTION:       This is the destructor used by both Matrix and Matrix_ops classes
+                    This destructs objects after they are done being used and calls
+                     clear to do it.
+RETURNS:           destructors do not return Objects
+NOTES:             templated class functions
 ===============================================================================*/
 
 template<typename T>
@@ -475,27 +579,34 @@ Matrix<T>::~Matrix(){
     this->clear();
 
 }
+
+/*=============================================================================
+FUNCTION:          void Matrix<T>::clear()
+DESCRIPTION:       This functions sole purpose is too clear out the memory of a
+                    Matrix object
+RETURNS:           Nothing (Void Function)
+NOTES:             templated class functions -- *protected* member function
+===============================================================================*/
+
 template<typename T>
 void Matrix<T>::clear(){
     std::cout <<"\t clear\n";//remove
     for(int i = 0; i < this->rows; ++i){
-        std::cout <<"\t before delete\n";//remove
         delete [] this->array[i];
-        //this->array[i] = NULL;
-        std::cout <<"\t after delete\n";//remove
+        this->array[i] = NULL;
     }
-    std::cout <<"\t post for loop clear\n";//remove
+
     delete [] this->array;
-/*
-    for(int i = this->cols; i >= 0; --i){
-        for(int j = 0; j < this->rows; ++j){
-            free(this->array[j]);
-        }
-        free(this->array[i]);
-    }*/
 
 }
 
+/*=============================================================================
+FUNCTION:          expo(const T &base, const T &power)
+DESCRIPTION:       This function computes the exponent of a base and the number
+                        is is raised to (like the pow function)
+RETURNS:           Returns the templated data after the result of exponentiation
+NOTES:             templated class functions and uses recursion
+===============================================================================*/
 
 template<typename T>
 T expo(const T &base, const T &power) {

@@ -1,9 +1,13 @@
 /*===============================================================================
 FILE:              matrix_math.cpp
+
 DESCRIPTION:       This program is the main driver program for matrix.cpp and Matrix.h
+
 COMPILER:          Linux GNU g++ compiler c++ -std=c++11
                     using custom makefile and Clion IDE editor
+
 NOTES:             Includes the implementation file Matrix.cpp
+
 MODIFICATION HISTORY:
 Author                  Date               Version
 ---------------         ----------         --------------
@@ -26,8 +30,9 @@ Shawn Ray               2017-04-28         Version 2.5 added stuffs for class ob
 Shawn Ray               2017-04-29         Version 2.6  bug fix
 Shawn Ray               2017-04-30         Version 2.7  bug fix
 Shawn Ray               2017-05-01         Version 2.8
-Shawn Ray               2017-04-02         Version 2.9
-Shawn Ray               2017-04-03         Version 3.0 bug fix
+Shawn Ray               2017-05-02         Version 2.9
+Shawn Ray               2017-05-03         Version 3.0 bug fix
+Shawn Ray               2017-05-04         Version 3.1 added ability for output file
 ================================================================================*/
 
 
@@ -36,7 +41,7 @@ Shawn Ray               2017-04-03         Version 3.0 bug fix
 
 /*=============================================================================
 FUNCTION:          main()
-DESCRIPTION:       Creates a matrix object, sets some values and displays it
+DESCRIPTION:       Creates a matrix object, and calls the appropriate functions
 RETURNS:           Main being in type returns a 0 to signify successful completion
 NOTES:             Put other information here ...
 ===============================================================================*/
@@ -51,7 +56,8 @@ int main(int argc, char *argv[]){
     if(test_arg(argc, command_var)) return 0;
     std::cout << "\tTest main after \n"; // remove
 
-    compare_arg(argc, argv, command_var);
+        compare_arg(argc, argv, command_var);
+
     std::cout << "\tTest compare_arg after \n";//remove
     return 0;
 }
@@ -61,7 +67,7 @@ FUNCTION:          bool test_arg(int argc, const Stuff &command_var)
 DESCRIPTION:       This function tests to see if there are enough command line
 RETURNS:           Being boolean type, it returns true or false depending on
                     if there are enough command line arguments
-NOTES:             passed another class object for variables
+NOTES:             passed Class object for command line variables
 ===============================================================================*/
 
 bool test_arg(int argc, Stuff &command_var){
@@ -81,12 +87,25 @@ FUNCTION:          void compare_arg(char *argv[], Stuff &command_var)
 DESCRIPTION:       This function tests the argument vector to see if there are valid
                     commands
 RETURNS:           Nothing (Void Function)
-NOTES:             Put other information here ...
+NOTES:             passed Class object for command line variables
 ===============================================================================*/
 
 void compare_arg(int argc, char *argv[], Stuff &command_var){
     std::cout << "\tTest compare_arg inside \n";//remove
+
+    char file[20];
+    bool file_true = false;
+
+
     try {
+
+        if(argc > 4) {  // note this method doesn't work with no arguments unless this if is here
+            if ((strcmp(argv[command_var.position + 3], "-out")) == 0) {
+                std::cout << "\toutput file test stuff\n";
+                strcpy(file, argv[command_var.position + 4]);
+                file_true = true;
+            }
+        }
 
         if ((strcmp(argv[command_var.position], "-h")) == 0) {
             help();
@@ -95,24 +114,23 @@ void compare_arg(int argc, char *argv[], Stuff &command_var){
             Matrix<int> mat1 = open_file<Matrix<int> >(argc, argv, command_var);
             std::cout << mat1;
         }
-        if ((strcmp(argv[command_var.position], "-out")) == 0) {
-            std::cout << "\toutput file test stuff\n";
-
-        }
         if ((strcmp(argv[command_var.position], "-add")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
             Matrix_ops<int> mat2 = open_file<Matrix_ops<int> >(argc, argv, command_var);
             std::cout << mat2 + mat1;
+                if(file_true) (mat2 + mat1).out_file(file);
         }
         if ((strcmp(argv[command_var.position], "-sub")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
             Matrix_ops<int> mat2 = open_file<Matrix_ops<int> >(argc, argv, command_var);
             std::cout << mat2 - mat1;
+                if(file_true) (mat2 - mat1).out_file(file);
         }
         if ((strcmp(argv[command_var.position], "-mul")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
             Matrix_ops<int> mat2 = open_file<Matrix_ops<int> >(argc, argv, command_var);
             std::cout << mat1 * mat2;
+                if(file_true) (mat2 * mat1).out_file(file);
         }
         if ((strcmp(argv[command_var.position], "-eq")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
@@ -125,6 +143,7 @@ void compare_arg(int argc, char *argv[], Stuff &command_var){
         if ((strcmp(argv[command_var.position], "-T")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
             std::cout << mat1.trans();
+            if(file_true) (mat1.trans()).out_file(file);
         }
         if ((strcmp(argv[command_var.position], "-det")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
@@ -137,6 +156,7 @@ void compare_arg(int argc, char *argv[], Stuff &command_var){
             //Matrix_ops<double> mat2(mat1);
             //std::cout << "test mat2 \n";
             //std::cout << mat2;
+                if(file_true) (mat1.inv()).out_file(file);
         }
         if ((strcmp(argv[command_var.position], "-solve")) == 0) {
             Matrix_ops<double> mat1 = open_file<Matrix_ops<double> >(argc, argv, command_var);

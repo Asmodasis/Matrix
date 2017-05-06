@@ -1,11 +1,15 @@
 /*===============================================================================
 FILE:              Matrix.h
+
 DESCRIPTION:       This header file creates the Classes used for Matrices
+
 COMPILER:          Linux GNU g++ compiler c++ -std=c++11
                     using custom makefile and Clion IDE editor
+
 NOTES:             Matrix_ops inherits from Matrix class and Stuff class just contains the stuff used
                         in the Driver
                          Matrix has protected members so Matrix_ops can inherit, so no private members
+
 MODIFICATION HISTORY:
 Author                  Date               Version
 ---------------         ----------         --------------
@@ -31,8 +35,10 @@ Shawn Ray               2017-04-28         Version 2.5 added Clear and resize fu
 Shawn Ray               2017-04-29         Version 2.6
 Shawn Ray               2017-04-30         Version 2.7
 Shawn Ray               2017-05-01         Version 2.8 virtual destruction
-Shawn Ray               2017-04-02         Version 2.9
-Shawn Ray               2017-04-03         Version 3.0
+Shawn Ray               2017-05-02         Version 2.9
+Shawn Ray               2017-05-03         Version 3.0 worked on reduced row
+Shawn Ray               2017-05-04         Version 3.1 added output file member
+Shawn Ray               2017-05-05         Version 3.2 Worked on completing the inverse
 ================================================================================*/
 
 
@@ -44,6 +50,13 @@ Shawn Ray               2017-04-03         Version 3.0
 #include <fstream>
 #include <string.h>
 
+
+/*===============================================================================
+CLASS:             Matrix{};
+DESCRIPTION:	   This class declares the variables and basic operations to be used
+                    for matrix objects
+NOTES:             templated class type
+===============================================================================*/
 
 template<typename T>
 class Matrix {
@@ -72,6 +85,14 @@ public:
     virtual ~Matrix();
 };
 
+/*===============================================================================
+CLASS:             Matrix_ops{};
+CLASS DEPENDANT:	   Matrix{};
+DESCRIPTION:	   This class sets forth the ground work for arithmetical operations
+                    to be enacted on the objects in the file
+NOTES:             Inherits information and behaviour from Matrix class, and templated class
+=============================================================================== */
+
 template<typename T>
 class Matrix_ops : public Matrix<T>
 {
@@ -93,7 +114,16 @@ public:
     Matrix_ops<T>& div_row(int);
     Matrix_ops<T> solve() const;
 
+    Matrix_ops<T>& out_file(char []);
+
 };
+
+/*===============================================================================
+CLASS:             Stuff{};
+DESCRIPTION:	   This class just lays down the ground work for the variables used
+                    inside of matrix_math.cpp
+NOTES:              templated class
+===============================================================================*/
 
 class Stuff{
 public:
