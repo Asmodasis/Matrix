@@ -51,14 +51,10 @@ int main(int argc, char *argv[]){
 
     Stuff command_var;
 
-    std::cout << "\tTest main\n"; // remove
-
     if(test_arg(argc, command_var)) return 0;
-    std::cout << "\tTest main after \n"; // remove
 
         compare_arg(argc, argv, command_var);
 
-    std::cout << "\tTest compare_arg after \n";//remove
     return 0;
 }
 
@@ -71,7 +67,7 @@ NOTES:             passed Class object for command line variables
 ===============================================================================*/
 
 bool test_arg(int argc, Stuff &command_var){
-    std::cout << "\tTest testg_arg \n";//remove
+
     if(argc < 2){
         std::cout << "Not enough Arguments ?\n\n";
         return true;
@@ -91,7 +87,6 @@ NOTES:             passed Class object for command line variables
 ===============================================================================*/
 
 void compare_arg(int argc, char *argv[], Stuff &command_var){
-    std::cout << "\tTest compare_arg inside \n";//remove
 
     char file[20];
     bool file_true = false;
@@ -101,7 +96,6 @@ void compare_arg(int argc, char *argv[], Stuff &command_var){
 
         if(argc > 4) {  // note this method doesn't work with no arguments unless this if is here
             if ((strcmp(argv[command_var.position + 3], "-out")) == 0) {
-                std::cout << "\toutput file test stuff\n";
                 strcpy(file, argv[command_var.position + 4]);
                 file_true = true;
             }
@@ -112,29 +106,50 @@ void compare_arg(int argc, char *argv[], Stuff &command_var){
         }
         if ((strcmp(argv[command_var.position], "-inp")) == 0) {
             Matrix<int> mat1 = open_file<Matrix<int> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
             std::cout << mat1;
         }
         if ((strcmp(argv[command_var.position], "-add")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat1;
             Matrix_ops<int> mat2 = open_file<Matrix_ops<int> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat2;
+            std::cout << std::setw(4) << argv[command_var.position-1] << " + " << argv[command_var.position] << " = ";
             std::cout << mat2 + mat1;
                 if(file_true) (mat2 + mat1).out_file(file);
         }
         if ((strcmp(argv[command_var.position], "-sub")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat1;
             Matrix_ops<int> mat2 = open_file<Matrix_ops<int> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat2;
+            std::cout << std::setw(4) << argv[command_var.position-1] << " - " << argv[command_var.position] << " = ";
             std::cout << mat2 - mat1;
                 if(file_true) (mat2 - mat1).out_file(file);
         }
         if ((strcmp(argv[command_var.position], "-mul")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat1;
             Matrix_ops<int> mat2 = open_file<Matrix_ops<int> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat2;
+            std::cout << std::setw(4) << argv[command_var.position-1] << " * " << argv[command_var.position] << " = ";
             std::cout << mat1 * mat2;
-                if(file_true) (mat2 * mat1).out_file(file);
+                if(file_true) (mat1 * mat2).out_file(file);
         }
         if ((strcmp(argv[command_var.position], "-eq")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat1;
             Matrix_ops<int> mat2 = open_file<Matrix_ops<int> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat2;
+            std::cout << std::setw(4) << argv[command_var.position-1] << " == " << argv[command_var.position] << " ? \n";
             if (mat1 == mat2)
                 std::cout << "\tYes: the two matrices are equal\n";
             else
@@ -142,25 +157,37 @@ void compare_arg(int argc, char *argv[], Stuff &command_var){
         }
         if ((strcmp(argv[command_var.position], "-T")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat1;
+            std::cout << std::setw(4) << "The transpose of Matrix " << argv[command_var.position];
+            std::cout << " = ";
             std::cout << mat1.trans();
             if(file_true) (mat1.trans()).out_file(file);
         }
         if ((strcmp(argv[command_var.position], "-det")) == 0) {
             Matrix_ops<int> mat1 = open_file<Matrix_ops<int> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat1;
+            std::cout << std::setw(4) << "The determinant of Matrix " << argv[command_var.position];
+            std::cout << " = ";
             std::cout << mat1.det();
         }
         if ((strcmp(argv[command_var.position], "-1")) == 0) {
             Matrix_ops<double> mat1 = open_file<Matrix_ops<double> >(argc, argv, command_var);
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat1;
+            std::cout << std::setw(4) << "The inverse of Matrix " << argv[command_var.position];
+            std::cout << " = ";
             std::cout << mat1.inv();
-            //std::cout << mat1.reduced_row();
-            //Matrix_ops<double> mat2(mat1);
-            //std::cout << "test mat2 \n";
-            //std::cout << mat2;
                 if(file_true) (mat1.inv()).out_file(file);
         }
         if ((strcmp(argv[command_var.position], "-solve")) == 0) {
             Matrix_ops<double> mat1 = open_file<Matrix_ops<double> >(argc, argv, command_var);
-            std::cout << mat1.solve();
+            std::cout << std::setw(4) <<  "Matrix " << argv[command_var.position] << " = ";
+            std::cout << mat1;
+            std::cout << std::setw(4) << "The solutions are :";
+            std::cout << std::setw(4) <<  mat1.solve();
+
         }
     }
 
@@ -181,7 +208,7 @@ NOTES:             passed another class object for variables, passed position fr
 ===============================================================================*/
 template<typename T>
 T open_file(int argc, char *argv[],Stuff &command_var){
-    std::cout << "\tTest open_file \n";//remove
+
     ++command_var.position; // incrememnt the position of the command line, to account for multiple args
     if(argc > 1){ //
         strcpy(command_var.file1, argv[command_var.position]);
@@ -215,21 +242,21 @@ RETURNS:           Nothing (Void Function)
 
 void help(){
 
-    std::cout << "\t===========================================================\n";
-    std::cout << "\t======= Welcome to the Help menu for matrix_math.cpp ======\n";
-    std::cout << "\t= This Help menu will guide you through the valid commands =\n";
-    std::cout << "\t========= that you can enter: They are as follows =========\n";
-    std::cout << "\t=== -h for the help menu =\n";
-    std::cout << "\t===========================================================\n";
-    std::cout << "\t=== -inp to read input from a file and display the matrix  ==\n";
+    std::cout << "\t==============================================================\n";
+    std::cout << "\t======= Welcome to the Help menu for matrix_math.cpp =========\n";
+    std::cout << "\t= This Help menu will guide you through the valid commands ===\n";
+    std::cout << "\t========= that you can enter: They are as follows ============\n";
+    std::cout << "\t=============== -h for the help menu =========================\n";
+    std::cout << "\t==============================================================\n";
+    std::cout << "\t=== -inp to read input from a file and display the matrix  ===\n";
     std::cout << "\t=== -out tells the current operation to be printed to a file =\n";
-    std::cout << "\t=== -add input the two matrices and adds them together\n";
-    std::cout << "\t=== -sub inputs the two matrices and subtracts them=\n";
-    std::cout << "\t=== -mul multiplies two matrices together=\n";
-    std::cout << "\t=== -eq tests to see if two matrices are equal=\n";
-    std::cout << "\t=== -T computes the tranverse of a matrix=\n";
-    std::cout << "\t=== -1 computes the inverse of a matrix=\n";
-    std::cout << "\t=== -det calculates the determinant of a matrix=\n";
-    std::cout << "\t=== -solve solves a system of linear equations=\n";
-    std::cout << "\t===========================================================\n";
+    std::cout << "\t=== -add input the two matrices and adds them together =======\n";
+    std::cout << "\t=== -sub inputs the two matrices and subtracts them ==========\n";
+    std::cout << "\t=== -mul multiplies two matrices together ====================\n";
+    std::cout << "\t=== -eq tests to see if two matrices are equal ===============\n";
+    std::cout << "\t=== -T computes the tranverse of a matrix ====================\n";
+    std::cout << "\t=== -1 computes the inverse of a matrix ======================\n";
+    std::cout << "\t=== -det calculates the determinant of a matrix ==============\n";
+    std::cout << "\t=== -solve solves a system of linear equations --------------=\n";
+    std::cout << "\t==============================================================\n";
 }

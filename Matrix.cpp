@@ -54,7 +54,7 @@ NOTES:             templated class functions
 ===============================================================================*/
 template<typename T>
 Matrix<T>::Matrix(){
-    std::cout << "\tTest default constructor \n"; //remove
+
     rows = 0;
     cols = 0;
     array = NULL;
@@ -72,8 +72,6 @@ NOTES:             templated class functions
 template<typename T>
 Matrix<T>::Matrix(int n_rows, int n_cols){
 
-    std::cout << "\tTest overloaded construtctor \n"; //remove
-
     resize(n_rows, n_cols, false);
 }
 
@@ -87,7 +85,6 @@ NOTES:             templated class functions
 template<typename T>
 Matrix<T>::Matrix(const Matrix<T> &m1){
 
-    std::cout << "\tTest copy construtctor \n"; //remove
     (*this) = m1;
 }
 
@@ -142,21 +139,10 @@ NOTES:             templated class functions
 template<typename T>
 Matrix<T>& Matrix<T>::operator = (const Matrix<T> &m1){
 
-    //if(this->rows != m1.rows || this->cols != m1.cols) {
-    std::cout << "\tTest = operator resize prior\n"; // remove
-    std::cout << "\tTest m1 rows\n"; // remove
-    std::cout << m1.rows;// remove
-    std::cout << "\tTest m1 cols\n"; // remove
-    std::cout << m1.cols; // remove
-    this->resize(m1.rows, m1.cols);
-    std::cout << "\tTest = operator resize post\n"; // remove
-    //}
     for(int i = 0; i < this->rows; ++i){
         for(int j = 0; j < this->cols; j++){
             this->array[i][j] = m1.array[i][j];
-            std::cout << this->array[i][j] << " "; // remove
         }
-
     }
 
     return *this;
@@ -172,13 +158,9 @@ template<typename T>
 void Matrix<T>::resize(const int &s_row, const int &s_col, bool doclear){
 
 
-    if(doclear){
-        std::cout << "doclear\n";
+    if(doclear)
         this->clear();
 
-    }
-
-    std::cout << "\tResizing to " << s_row << "x" << s_col << std::endl; // remove
     this->rows = s_row;
     this->cols = s_col;
 
@@ -353,17 +335,16 @@ NOTES:             templated class functions -- This function uses Recursion
 
 template<typename T>
 T Matrix_ops<T>::det(){
-    std::cout << "\tTest Determinant\n"; // remove
 
     if(this->rows != this->cols)
         throw "\n\tYou can not take a determinant of a non-square matrix\n";
 
     if (this->rows == 2) {
-        std::cout << "\tTest Determinant base case\n"; // remove
+
         this->deter = ((this->array[0][0] * this->array[1][1]) - (this->array[1][0] * this->array[0][1]));
+
     } else {
 
-        std::cout << "\tTest Determinant recursive case\n"; // remove
         Matrix_ops<T> m1(this->rows - 1, this->cols - 1);
 
         this->deter = 0;
@@ -407,12 +388,8 @@ Matrix_ops<T> Matrix_ops<T>::inv(){
         }
     }
 
-
-
-    std::cout << "\n\n\tTest inverse m1 prior to reduced row \n"; //remove
-    std::cout << m1; //remove
-
     m1.reduced_row();
+    //*this = m1;
 
     return m1;
 }
@@ -426,7 +403,7 @@ NOTES:             templated class functions -- declared const as not to modify
 ===============================================================================*/
 
 template <typename T>
-Matrix_ops<T> Matrix_ops<T>::reduced_row() const{
+Matrix_ops<T> Matrix_ops<T>::reduced_row(){
 
     if(this->rows >= this->cols)
         throw "\n\tThis is not an augmented matrix!\n";
@@ -435,34 +412,13 @@ Matrix_ops<T> Matrix_ops<T>::reduced_row() const{
     Matrix_ops<T> m1(this->rows, this->cols);
     m1 = *this;
 
-    std::cout << "\n\n\t Post assign \n"; //remove
-    std::cout << m1; //remove
-    std::cout << "\n\n\tthis rows \n"; //remove
-    std::cout << this->rows;//remove
-    std::cout << "\n\n\tthis cols \n"; //remove
-    std::cout << this->cols;//remove
-    std::cout << "\n\n\tm1 rows \n"; //remove
-    std::cout << m1.rows;//remove
-    std::cout << "\n\n\tm1 cols \n"; //remove
-    std::cout << m1.cols;//remove
-
     for(int i = 0; i < m1.rows; ++i) {
+        m1.div_row(i, m1.array[i][i]);
 
-        m1.div_row(i);
-
-        for(int j =  i + 1; j < m1.rows; ++j){
-            for(int k = 0; k < m1.cols; ++k){
-
-                    m1.array[j][k] -= (m1.array[i][k] * m1.array[j][i]);
-
-            }
+        for (int j = 1; j < m1.rows; ++j) {
+            m1.sub_row(j);
         }
-
-
     }
-    std::cout << "\tTest inverse m1 \n"; //remove
-    std::cout << m1; //remove
-
     return m1;
 }
 
@@ -475,14 +431,31 @@ NOTES:             templated class functions
 ===============================================================================*/
 
 template<typename T>
-Matrix_ops<T>& Matrix_ops<T>::div_row(int i){
+Matrix_ops<T>& Matrix_ops<T>::div_row(int row_pos, T temp){
 
-    T temp = this->array[i][i];
 
-    for(int k = i; k < this->cols; ++k){
-        this->array[i][k] /= temp;
-        std::cout << "\n\n\t k loop \n"; //remove
-        std::cout << std::setprecision(2) <<  *this; //remove
+    for(int k = 0; k < this->cols; ++k){
+
+        this->array[row_pos][k] /= temp;
+    }
+    return *this;
+}
+
+/*=============================================================================
+FUNCTION:          Matrix_ops<T>& Matrix_ops<T>::sub_row(int row_pos)
+DESCRIPTION:       This function takes a row from a Matrix object and subtracts a
+                        previous row from it.
+                    of that Matrix by the element in the position passed
+RETURNS:           This function returns the object being worked with (this)
+NOTES:             templated class functions
+===============================================================================*/
+
+template<typename T>
+Matrix_ops<T>& Matrix_ops<T>::sub_row(int row_pos){
+
+
+    for(int i = 0; i < this->cols; ++i){
+        this->array[row_pos][i] = this->array[row_pos][i] - this->array[row_pos-1][i] * this->array[row_pos-1][row_pos-1];
     }
     return *this;
 }
@@ -497,8 +470,6 @@ NOTES:             templated class functions -- declared const as not to modify
 
 template<typename T>
 Matrix_ops<T> Matrix_ops<T>::solve() const{
-
-    std::cout << "\nTest solve\n"; //remove
 
     if(this->cols - 1 != this->rows)
         throw "\n\tThis system can not be solved by Cramer's rule!\n";
@@ -516,21 +487,15 @@ Matrix_ops<T> Matrix_ops<T>::solve() const{
                 var_det.array[j][k] = this->array[j][k];
                 if(!i){
                     maj_det.array[j][k] = this->array[j][k];
-                    std::cout << "\tTest maj det if statement"; // remove
-                    std::cout << maj_det; //remove
                 }
                 if(k == i){
                     var_det.array[j][k] = this->array[j][this->cols - 1];
-                    std::cout << "\tTest var det if statement"; //remove
-                    std::cout << var_det; //remove
                 }
             }
 
         }
         if(i == this->cols - 1) continue;
         result_mat.array[i][0] = (var_det.det() / maj_det.det());
-        std::cout << "\nfoo\n"; //remove
-        std::cout << result_mat.array[i][0]; //remove
 
     }
 
@@ -560,6 +525,8 @@ Matrix_ops<T>& Matrix_ops<T>::out_file(char file []){
 
     outfile.close();
 
+    return *this;
+
 }
 
 
@@ -575,7 +542,6 @@ NOTES:             templated class functions
 
 template<typename T>
 Matrix<T>::~Matrix(){
-    std::cout <<"\t Destructor\n"; //remove
     this->clear();
 
 }
@@ -590,7 +556,7 @@ NOTES:             templated class functions -- *protected* member function
 
 template<typename T>
 void Matrix<T>::clear(){
-    std::cout <<"\t clear\n";//remove
+
     for(int i = 0; i < this->rows; ++i){
         delete [] this->array[i];
         this->array[i] = NULL;
@@ -610,7 +576,6 @@ NOTES:             templated class functions and uses recursion
 
 template<typename T>
 T expo(const T &base, const T &power) {
-
     switch (power) {
         case 0:
             return 1;

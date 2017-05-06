@@ -110,8 +110,9 @@ public:
     Matrix_ops<T> trans() const;
     T det();
     Matrix_ops<T> inv();
-    Matrix_ops<T> reduced_row() const;
-    Matrix_ops<T>& div_row(int);
+    Matrix_ops<T> reduced_row();
+    Matrix_ops<T>& div_row(int, T);
+    Matrix_ops<T>& sub_row(int);
     Matrix_ops<T> solve() const;
 
     Matrix_ops<T>& out_file(char []);
